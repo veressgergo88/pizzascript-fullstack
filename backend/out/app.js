@@ -28,7 +28,7 @@ app.post('/api/orders', (req, res) => __awaiter(void 0, void 0, void 0, function
     const { customer, customername, zipcode, city, street, house, email, phone, date, pizza, pizzaname, piece, price, totalprice } = req.body;
     let newOrder = [];
     newOrder.push({ customer, customername, zipcode, city, street, house, email, phone, pizza, date, pizzaname, piece, price, totalprice });
-    yield promises_1.default.writeFile(`./orders/order_${customername}_${date}.json`, JSON.stringify(newOrder), "utf-8");
+    yield promises_1.default.writeFile(`./orders/order_${customer.customername}_${date}.json`, JSON.stringify(newOrder), "utf-8");
     res.status(200).json("OK");
 }));
 app.listen(port, () => {

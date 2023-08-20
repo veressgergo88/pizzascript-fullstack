@@ -16,6 +16,18 @@ const ResponseSchema = z.object({
 type Response = z.infer<typeof ResponseSchema>;
 */
 
+const PizzaResponseSchema = z.object({
+
+  id: z.number(),
+  name: z.string(),
+  toppings: z.string(),
+  price: z.number(),
+  link: z.string()
+});
+type PizzaResponse = z.infer<typeof PizzaResponseSchema>;
+
+
+
 let pizzaOneName = document.getElementById("pizzaone")! as HTMLHeadingElement
 let pizzaTwoName = document.getElementById("pizzatwo")! as HTMLHeadingElement
 let pizzaThreeName = document.getElementById("pizzathree")! as HTMLHeadingElement
@@ -45,16 +57,23 @@ const ResponseSchema = z.object({
 type Response = z.infer<typeof ResponseSchema>;
 */
 
+const PizzaArraySchema = z.array(PizzaResponseSchema)
+type PizzaArray = z.infer<typeof PizzaArraySchema>
+
 const serverLoad = async () => {
   const response = await http.get("http://localhost:3000/api/pizzas");
-  const result = response.data;
-  
-  if (!result.success) {
-    return console.log(null);
+  const result: PizzaArray = response.data;
+
+  const res = PizzaArraySchema.safeParse(result)
+
+  console.log(result)
+  if (!res.success) {
+    return console.log(res.error);
   } else {
-    return console.log(result.data);
+    return console.log("OK");
   }
 };
+
 
 serverLoad()
 
@@ -73,37 +92,43 @@ const pizzaFiveCount = document.getElementById("amountfive")! as HTMLInputElemen
 const pizzaSixCount = document.getElementById("amountsix")! as HTMLInputElement
 const pizzaSevenCount = document.getElementById("amountseven")! as HTMLInputElement
 
+const CustomerSchema = z.object({
+  name: z.string(),
+  zipcode: z.string(),
+  city: z.string(),
+  street: z.string(),
+  house: z.string(),
+  email: z.string(),
+  phone: z.string()
+})
 
-type Customer = {
-    name: string,
-    zipcode: string,
-    city: string,
-    street: string,
-    house: string,
-    email: string,
-    phone: string
-}
+type Customer = z.infer<typeof CustomerSchema>
 
-type Pizza = {
-    pizzaname: string;
-    piece: string;
-    price: string
-};
+const PizzaSchema = z.object({
+  pizzaname: z.string(),
+  piece: z.string(),
+  price: z.string()
+})
 
-type Order = {
-  customer: {
-    customername: string,
-    zipcode: string,
-    city: string,
-    street: string,
-    house: string,
-    email: string,
-    phone: string
-  },
-  date: string,
-  pizza: Pizza[]
-  totalprice: number
-}
+type Pizza = z.infer<typeof PizzaSchema>
+
+const OrderSchema = z.object({
+  customer: z.object({
+    customername: z.string(),
+    zipcode: z.string(),
+    city: z.string(),
+    street: z.string(),
+    house: z.string(),
+    email: z.string(),
+    phone: z.string(),
+  }),
+  date: z.string(),
+  pizza: z.array(z.string()),
+  totalprice: z.number()
+})
+
+type Order = z.infer<typeof OrderSchema>
+
 
 let amountArray: number[] = []
 let pizzaOrders: Pizza[] = []
@@ -123,87 +148,90 @@ document.getElementById("addtoorder")!.addEventListener("click", () => {
     house: customerHouseNumber.value,
     email: customerEmail.value,
     phone: customerPhoneNumber.value
-};
+  };
 
-      document.getElementById("outname")!.textContent = customerData.name
-      document.getElementById("outaddress")!.textContent = customerData.zipcode + " " + customerData.city + " " + customerData.street + " " + customerData.house
-      document.getElementById("outemail")!.textContent = customerData.email
-      document.getElementById("outphone")!.textContent = customerData.phone
+  document.getElementById("outname")!.textContent = customerData.name
+  document.getElementById("outaddress")!.textContent = customerData.zipcode + " " + customerData.city + " " + customerData.street + " " + customerData.house
+  document.getElementById("outemail")!.textContent = customerData.email
+  document.getElementById("outphone")!.textContent = customerData.phone
 
-      const pizzaOrder: Pizza[] = [
-          { pizzaname: pizzaOneName.textContent!, piece: pizzaOneCount.value, price: pizzaOnePrice.textContent!},
-          { pizzaname: pizzaTwoName.textContent!, piece: pizzaTwoCount.value, price: pizzaTwoPrice.textContent!},
-          { pizzaname: pizzaThreeName.textContent!, piece: pizzaThreeCount.value, price: pizzaThreePrice.textContent!},
-          { pizzaname: pizzaFourName.textContent!, piece: pizzaFourCount.value, price: pizzaFourPrice.textContent!},
-          { pizzaname: pizzaFiveName.textContent!, piece: pizzaFiveCount.value, price: pizzaFivePrice.textContent!},
-          { pizzaname: pizzaSixName.textContent!, piece: pizzaSixCount.value, price: pizzaSixPrice.textContent!},
-          { pizzaname: pizzaSevenName.textContent!, piece: pizzaSevenCount.value, price: pizzaSevenPrice.textContent!},
-      ];
+  const pizzaOrder: Pizza[] = [
+    { pizzaname: pizzaOneName.textContent!, piece: pizzaOneCount.value, price: pizzaOnePrice.textContent! },
+    { pizzaname: pizzaTwoName.textContent!, piece: pizzaTwoCount.value, price: pizzaTwoPrice.textContent! },
+    { pizzaname: pizzaThreeName.textContent!, piece: pizzaThreeCount.value, price: pizzaThreePrice.textContent! },
+    { pizzaname: pizzaFourName.textContent!, piece: pizzaFourCount.value, price: pizzaFourPrice.textContent! },
+    { pizzaname: pizzaFiveName.textContent!, piece: pizzaFiveCount.value, price: pizzaFivePrice.textContent! },
+    { pizzaname: pizzaSixName.textContent!, piece: pizzaSixCount.value, price: pizzaSixPrice.textContent! },
+    { pizzaname: pizzaSevenName.textContent!, piece: pizzaSevenCount.value, price: pizzaSevenPrice.textContent! },
+  ];
 
-      pizzaOrder.forEach((pizzaData) => {
-          const count = parseInt(pizzaData.piece);
-          if (count > 0) {
-              const multiply = count * parseInt(pizzaData.price)
-              const nameElement = document.createElement("h2");
-              nameElement.textContent = pizzaData.pizzaname;
-              document.getElementById("pizzaordername")!.appendChild(nameElement);
-              const pieceElement = document.createElement("h2");
-              pieceElement.textContent = pizzaData.piece + " pc"
-              document.getElementById("pizzaorderpiece")!.appendChild(pieceElement);
-              const priceElement = document.createElement("h2");
-              priceElement.textContent = multiply.toString() + " Ft";
-              document.getElementById("pizzaorderprice")!.appendChild(priceElement);
-              
-              let newOrder = {pizzaname: pizzaData.pizzaname, piece: pizzaData.piece, price: pizzaData.price}
-              pizzaOrders.push(newOrder)
+  pizzaOrder.forEach((pizzaData) => {
+    const count = parseInt(pizzaData.piece);
+    if (count > 0) {
+      const multiply = count * parseInt(pizzaData.price)
+      const nameElement = document.createElement("h2");
+      nameElement.textContent = pizzaData.pizzaname;
+      document.getElementById("pizzaordername")!.appendChild(nameElement);
+      const pieceElement = document.createElement("h2");
+      pieceElement.textContent = pizzaData.piece + " pc"
+      document.getElementById("pizzaorderpiece")!.appendChild(pieceElement);
+      const priceElement = document.createElement("h2");
+      priceElement.textContent = multiply.toString() + " Ft";
+      document.getElementById("pizzaorderprice")!.appendChild(priceElement);
 
-              amountArray.push(multiply)
-          }
-      });
+      let newOrder = { pizzaname: pizzaData.pizzaname, piece: pizzaData.piece, price: pizzaData.price }
+      pizzaOrders.push(newOrder)
 
-      function sumAmountArray(numbers: number[]): number {
-          let sum = 0;
-          for (const num of numbers) {
-            sum += num;
-          }
-          return sum;
-      }
+      amountArray.push(multiply)
+    }
+  });
 
-      priceSum = sumAmountArray(amountArray)
+  function sumAmountArray(numbers: number[]): number {
+    let sum = 0;
+    for (const num of numbers) {
+      sum += num;
+    }
+    return sum;
+  }
 
-      if(priceSum !== 0){
-      const totalPriceElement = document.createElement("h2")
-      totalPriceElement.textContent = priceSum.toString() + " Ft"
-      document.getElementById("totalprice")!.appendChild(totalPriceElement)
-      }
-      
-      const orderCheck = document.getElementById("ordercheck")!
-      orderCheck.removeAttribute("style")
+  priceSum = sumAmountArray(amountArray)
 
-      const orderButton = document.getElementById("order")!
-      orderButton.removeAttribute("style")
+  if (priceSum !== 0) {
+    const totalPriceElement = document.createElement("h2")
+    totalPriceElement.textContent = priceSum.toString() + " Ft"
+    document.getElementById("totalprice")!.appendChild(totalPriceElement)
+  }
+
+  const orderCheck = document.getElementById("ordercheck")!
+  orderCheck.removeAttribute("style")
+
+  const orderButton = document.getElementById("order")!
+  orderButton.removeAttribute("style")
 })
 
 
 document.getElementById("order")!.addEventListener("click", () => {
   async function postJSON(data: any) {
     try {
-      const response = await fetch("http://localhost:3000/api/orders", {
+      const response = await http("http://localhost:3000/api/orders", {
         method: "POST", // or 'PUT'
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        data: JSON.stringify(data),
       });
-  
-      const result = await response.json();
+      
+      console.log(data)
+
+      const result = await response.data;
       console.log("Success:", result);
     } catch (error) {
       console.error("Error:", error);
     }
   }
-  
-  const orderData: Order = { 
+
+
+  const orderData: Order = {
     customer: {
       customername: customerName.value,
       zipcode: customerZipCode.value,
@@ -217,7 +245,7 @@ document.getElementById("order")!.addEventListener("click", () => {
     pizza: pizzaOrders,
     totalprice: priceSum,
   };
-  
+
   postJSON(orderData);
 
 })
