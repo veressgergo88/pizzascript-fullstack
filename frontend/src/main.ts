@@ -2,16 +2,6 @@ import "./style.css";
 import http from "axios";
 import { z } from "zod";
 
-const PizzaResponseSchema = z.array(z.object({
-    id: z.number(),
-    name: z.string(),
-    toppings: z.string(),
-    price: z.number(),
-    link: z.string()
-  }))
-
-type PizzaResponse = z.infer<typeof PizzaResponseSchema>;
-
 let pizzaOneName = document.getElementById("pizzaone")! as HTMLHeadingElement
 let pizzaTwoName = document.getElementById("pizzatwo")! as HTMLHeadingElement
 let pizzaThreeName = document.getElementById("pizzathree")! as HTMLHeadingElement
@@ -26,6 +16,13 @@ let pizzaFourToppings = document.getElementById("pizzafourtoppings")! as HTMLPar
 let pizzaFiveToppings = document.getElementById("pizzafivetoppings")! as HTMLParagraphElement
 let pizzaSixToppings = document.getElementById("pizzasixtoppings")! as HTMLParagraphElement
 let pizzaSevenToppings = document.getElementById("pizzaseventoppings")! as HTMLParagraphElement
+let pizzaOneImage = document.getElementById("pizzaoneimg")! as HTMLImageElement
+let pizzaTwoImage = document.getElementById("pizzatwoimg")! as HTMLImageElement
+let pizzaThreeImage = document.getElementById("pizzathreeimg")! as HTMLImageElement
+let pizzaFourImage = document.getElementById("pizzafourimg")! as HTMLImageElement
+let pizzaFiveImage = document.getElementById("pizzafiveimg")! as HTMLImageElement
+let pizzaSixImage = document.getElementById("pizzasiximg")! as HTMLImageElement
+let pizzaSevenImage = document.getElementById("pizzasevenimg")! as HTMLImageElement
 let pizzaOnePrice = document.getElementById("pizzaoneprice")! as HTMLElement
 let pizzaTwoPrice = document.getElementById("pizzatwoprice")! as HTMLElement
 let pizzaThreePrice = document.getElementById("pizzathreeprice")! as HTMLElement
@@ -33,51 +30,6 @@ let pizzaFourPrice = document.getElementById("pizzafourprice")! as HTMLElement
 let pizzaFivePrice = document.getElementById("pizzafiveprice")! as HTMLElement
 let pizzaSixPrice = document.getElementById("pizzasixprice")! as HTMLElement
 let pizzaSevenPrice = document.getElementById("pizzasevenprice")! as HTMLElement
-
-const serverLoad = async (): Promise<PizzaResponse | null> => {
-  const response = await http.get("http://localhost:3000/api/pizzas");
-  const data = response.data
-
-  const result = PizzaResponseSchema.safeParse(data)
-
-  if (!result.success) {
-    return null
-  } else {
-    return result.data
-  }
-};
-
-function renderData(apiData: PizzaResponse) {
-  pizzaOneName.innerHTML= apiData[0].name
-  pizzaOneToppings.innerHTML = apiData[0].toppings
-  pizzaOnePrice.innerHTML = "" + (apiData[0].price)
-  pizzaTwoName.innerHTML= apiData[1].name
-  pizzaTwoToppings.innerHTML = apiData[1].toppings
-  pizzaTwoPrice.innerHTML = "" + (apiData[1].price)
-  pizzaThreeName.innerHTML= apiData[2].name
-  pizzaThreeToppings.innerHTML = apiData[2].toppings
-  pizzaThreePrice.innerHTML = "" + (apiData[2].price)
-  pizzaFourName.innerHTML= apiData[3].name
-  pizzaFourToppings.innerHTML = apiData[3].toppings
-  pizzaFourPrice.innerHTML = "" + (apiData[3].price)
-  pizzaFiveName.innerHTML= apiData[4].name
-  pizzaFiveToppings.innerHTML = apiData[4].toppings
-  pizzaFivePrice.innerHTML = "" + (apiData[4].price)
-  pizzaSixName.innerHTML= apiData[5].name
-  pizzaSixToppings.innerHTML = apiData[5].toppings
-  pizzaSixPrice.innerHTML = "" + (apiData[5].price)
-  pizzaSevenName.innerHTML= apiData[6].name
-  pizzaSevenToppings.innerHTML = apiData[6].toppings
-  pizzaSevenPrice.innerHTML = "" + (apiData[6].price)
-}
-
-const loadData = async () => {
-  const apiData = await serverLoad()
-  if (apiData) renderData(apiData)
-}
-
-loadData()
-
 const customerName = document.getElementById("name")! as HTMLInputElement
 const customerZipCode = document.getElementById("zipcode")! as HTMLInputElement
 const customerCity = document.getElementById("city")! as HTMLInputElement
@@ -92,6 +44,24 @@ const pizzaFourCount = document.getElementById("amountfour")! as HTMLInputElemen
 const pizzaFiveCount = document.getElementById("amountfive")! as HTMLInputElement
 const pizzaSixCount = document.getElementById("amountsix")! as HTMLInputElement
 const pizzaSevenCount = document.getElementById("amountseven")! as HTMLInputElement
+let amountArray: number[] = []
+let pizzaOrders: Pizza[] = []
+let priceSum = 0
+const date = new Date();
+const year = date.getFullYear();
+const month = date.getMonth() + 1;
+const day = date.getDate();
+const today = (`${year}-${month}-${day}`).toString()
+
+const PizzaResponseSchema = z.array(z.object({
+  id: z.number(),
+  name: z.string(),
+  toppings: z.string(),
+  price: z.number(),
+  link: z.string()
+}))
+
+type PizzaResponse = z.infer<typeof PizzaResponseSchema>;
 
 const CustomerSchema = z.object({
   name: z.string(),
@@ -134,14 +104,56 @@ const OrderSchema = z.object({
 
 type Order = z.infer<typeof OrderSchema>
 
-let amountArray: number[] = []
-let pizzaOrders: Pizza[] = []
-let priceSum = 0
-const date = new Date();
-const year = date.getFullYear();
-const month = date.getMonth() + 1;
-const day = date.getDate();
-const today = (`${year}-${month}-${day}`).toString()
+const serverLoad = async (): Promise<PizzaResponse | null> => {
+  const response = await http.get("http://localhost:3000/api/pizzas");
+  const data = response.data
+  
+  const result = PizzaResponseSchema.safeParse(data)
+  
+  if (!result.success) {
+    return null
+  } else {
+    return result.data
+  }
+};
+
+function renderData(apiData: PizzaResponse) {
+  pizzaOneImage.src= apiData[0].link
+  pizzaOneName.innerHTML= apiData[0].name
+  pizzaOneToppings.innerHTML = apiData[0].toppings
+  pizzaOnePrice.innerHTML = "" + (apiData[0].price)
+  pizzaTwoImage.src= apiData[1].link
+  pizzaTwoName.innerHTML= apiData[1].name
+  pizzaTwoToppings.innerHTML = apiData[1].toppings
+  pizzaTwoPrice.innerHTML = "" + (apiData[1].price)
+  pizzaThreeImage.src= apiData[2].link
+  pizzaThreeName.innerHTML= apiData[2].name
+  pizzaThreeToppings.innerHTML = apiData[2].toppings
+  pizzaThreePrice.innerHTML = "" + (apiData[2].price)
+  pizzaFourImage.src= apiData[3].link
+  pizzaFourName.innerHTML= apiData[3].name
+  pizzaFourToppings.innerHTML = apiData[3].toppings
+  pizzaFourPrice.innerHTML = "" + (apiData[3].price)
+  pizzaFiveImage.src= apiData[4].link
+  pizzaFiveName.innerHTML= apiData[4].name
+  pizzaFiveToppings.innerHTML = apiData[4].toppings
+  pizzaFivePrice.innerHTML = "" + (apiData[4].price)
+  pizzaSixImage.src= apiData[5].link
+  pizzaSixName.innerHTML= apiData[5].name
+  pizzaSixToppings.innerHTML = apiData[5].toppings
+  pizzaSixPrice.innerHTML = "" + (apiData[5].price)
+  pizzaSevenImage.src= apiData[6].link
+  pizzaSevenName.innerHTML= apiData[6].name
+  pizzaSevenToppings.innerHTML = apiData[6].toppings
+  pizzaSevenPrice.innerHTML = "" + (apiData[6].price)
+}
+
+const loadData = async () => {
+  const apiData = await serverLoad()
+  if (apiData) renderData(apiData)
+}
+
+loadData()
 
 document.getElementById("addtoorder")!.addEventListener("click", () => {
   const customerData: Customer = {
@@ -233,7 +245,6 @@ document.getElementById("order")!.addEventListener("click", () => {
       console.error("Error:", error);
     }
   }
-
 
   const orderData: Order = {
     customer: {
