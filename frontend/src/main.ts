@@ -170,6 +170,11 @@ document.getElementById("addtoorder")!.addEventListener("click", () => {
   document.getElementById("outaddress")!.textContent = customerData.zipcode + " " + customerData.city + " " + customerData.street + " " + customerData.house
   document.getElementById("outemail")!.textContent = customerData.email
   document.getElementById("outphone")!.textContent = customerData.phone
+  document.getElementById("pizzaordername")!.innerHTML=""
+  document.getElementById("pizzaorderpiece")!.innerHTML=""
+  document.getElementById("pizzaorderprice")!.innerHTML=""
+  document.getElementById("totalprice")!.textContent=""
+  amountArray= []
 
   const pizzaOrder: Pizza[] = [
     { pizzaname: pizzaOneName.textContent!, piece: pizzaOneCount.value, price: pizzaOnePrice.textContent! },
