@@ -1,1 +1,18 @@
-[{"customer":{"customername":"John Wick","zipcode":"1108","city":"Budapest","street":"Móricz Zsigmond utca","house":"102","email":"john.wick@gmail.com","phone":"+36305557774"},"pizza":[{"pizzaname":"Meatball Marinara","piece":"1","price":"3990"},{"pizzaname":"The Cheeseburger","piece":"1","price":"3950"},{"pizzaname":"Texas BBQ","piece":"1","price":"3690"},{"pizzaname":"Meatball Marinara","piece":"1","price":"3990"},{"pizzaname":"The Cheeseburger","piece":"1","price":"3950"},{"pizzaname":"Texas BBQ","piece":"1","price":"3690"},{"pizzaname":"Meatball Marinara","piece":"1","price":"3990"},{"pizzaname":"The Cheeseburger","piece":"1","price":"3950"},{"pizzaname":"Texas BBQ","piece":"1","price":"3690"},{"pizzaname":"Meatball Marinara","piece":"1","price":"3990"},{"pizzaname":"The Cheeseburger","piece":"1","price":"3950"},{"pizzaname":"Texas BBQ","piece":"1","price":"3690"},{"pizzaname":"Meatball Marinara","piece":"1","price":"3990"},{"pizzaname":"The Cheeseburger","piece":"1","price":"3950"},{"pizzaname":"Texas BBQ","piece":"3","price":"3690"},{"pizzaname":"Meatball Marinara","piece":"1","price":"3990"},{"pizzaname":"The Cheeseburger","piece":"1","price":"3950"},{"pizzaname":"Texas BBQ","piece":"1","price":"3690"},{"pizzaname":"Meatball Marinara","piece":"1","price":"3990"},{"pizzaname":"The Cheeseburger","piece":"1","price":"3950"},{"pizzaname":"Texas BBQ","piece":"2","price":"3690"}],"date":"2023-8-21","totalprice":0}]
+[
+  {
+    "customer": {
+      "customername": "John Wick",
+      "zipcode": "1108",
+      "city": "Budapest",
+      "street": "Móricz Zsigmond utca",
+      "house": "102",
+      "email": "john.wick@gmail.com",
+      "phone": "+36305557774"
+    },
+    "pizza": [
+      { "pizzaname": "Meatball Marinara", "piece": "2", "price": "3990" }
+    ],
+    "date": "2023-8-21",
+    "totalprice": 7980
+  }
+]

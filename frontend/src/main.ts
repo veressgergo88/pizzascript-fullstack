@@ -175,6 +175,7 @@ document.getElementById("addtoorder")!.addEventListener("click", () => {
   document.getElementById("pizzaorderprice")!.innerHTML=""
   document.getElementById("totalprice")!.textContent=""
   amountArray= []
+  pizzaOrders = []
 
   const pizzaOrder: Pizza[] = [
     { pizzaname: pizzaOneName.textContent!, piece: pizzaOneCount.value, price: pizzaOnePrice.textContent! },
