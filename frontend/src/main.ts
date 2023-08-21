@@ -2,31 +2,15 @@ import "./style.css";
 import http from "axios";
 import { z } from "zod";
 
-/*
-const ResponseSchema = z.object({
- id: 0,
-  name": "Meatball Marinara",
-  "toppings": "Onions, Herbs, Tomato Sauce Drizzle, Tomato Sauce, Mozzarella Cheese, Extra Pork Meatballs",
-  "price": 3990,
-  "link":"http://localhost:3000/images/marinara.webp"
-  });
-*/
+const PizzaResponseSchema = z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    toppings: z.string(),
+    price: z.number(),
+    link: z.string()
+  }))
 
-/* A kapott adat típusa
-type Response = z.infer<typeof ResponseSchema>;
-*/
-
-const PizzaResponseSchema = z.object({
-
-  id: z.number(),
-  name: z.string(),
-  toppings: z.string(),
-  price: z.number(),
-  link: z.string()
-});
 type PizzaResponse = z.infer<typeof PizzaResponseSchema>;
-
-
 
 let pizzaOneName = document.getElementById("pizzaone")! as HTMLHeadingElement
 let pizzaTwoName = document.getElementById("pizzatwo")! as HTMLHeadingElement
@@ -35,6 +19,13 @@ let pizzaFourName = document.getElementById("pizzafour")! as HTMLHeadingElement
 let pizzaFiveName = document.getElementById("pizzafive")! as HTMLHeadingElement
 let pizzaSixName = document.getElementById("pizzasix")! as HTMLHeadingElement
 let pizzaSevenName = document.getElementById("pizzaseven")! as HTMLHeadingElement
+let pizzaOneToppings = document.getElementById("pizzaonetoppings")! as HTMLParagraphElement
+let pizzaTwoToppings = document.getElementById("pizzatwotoppings")! as HTMLParagraphElement
+let pizzaThreeToppings = document.getElementById("pizzathreetoppings")! as HTMLParagraphElement
+let pizzaFourToppings = document.getElementById("pizzafourtoppings")! as HTMLParagraphElement
+let pizzaFiveToppings = document.getElementById("pizzafivetoppings")! as HTMLParagraphElement
+let pizzaSixToppings = document.getElementById("pizzasixtoppings")! as HTMLParagraphElement
+let pizzaSevenToppings = document.getElementById("pizzaseventoppings")! as HTMLParagraphElement
 let pizzaOnePrice = document.getElementById("pizzaoneprice")! as HTMLElement
 let pizzaTwoPrice = document.getElementById("pizzatwoprice")! as HTMLElement
 let pizzaThreePrice = document.getElementById("pizzathreeprice")! as HTMLElement
@@ -43,39 +34,49 @@ let pizzaFivePrice = document.getElementById("pizzafiveprice")! as HTMLElement
 let pizzaSixPrice = document.getElementById("pizzasixprice")! as HTMLElement
 let pizzaSevenPrice = document.getElementById("pizzasevenprice")! as HTMLElement
 
-/*
-const ResponseSchema = z.object({
- id: 0,
-  name": "Meatball Marinara",
-  "toppings": "Onions, Herbs, Tomato Sauce Drizzle, Tomato Sauce, Mozzarella Cheese, Extra Pork Meatballs",
-  "price": 3990,
-  "link":"http://localhost:3000/images/marinara.webp"
-  });
-*/
-
-/* A kapott adat típusa
-type Response = z.infer<typeof ResponseSchema>;
-*/
-
-const PizzaArraySchema = z.array(PizzaResponseSchema)
-type PizzaArray = z.infer<typeof PizzaArraySchema>
-
-const serverLoad = async () => {
+const serverLoad = async (): Promise<PizzaResponse | null> => {
   const response = await http.get("http://localhost:3000/api/pizzas");
-  const result: PizzaArray = response.data;
+  const data = response.data
 
-  const res = PizzaArraySchema.safeParse(result)
+  const result = PizzaResponseSchema.safeParse(data)
 
-  console.log(result)
-  if (!res.success) {
-    return console.log(res.error);
+  if (!result.success) {
+    return null
   } else {
-    return console.log("OK");
+    return result.data
   }
 };
 
+function renderData(apiData: PizzaResponse) {
+  pizzaOneName.innerHTML= apiData[0].name
+  pizzaOneToppings.innerHTML = apiData[0].toppings
+  pizzaOnePrice.innerHTML = "" + (apiData[0].price)
+  pizzaTwoName.innerHTML= apiData[1].name
+  pizzaTwoToppings.innerHTML = apiData[1].toppings
+  pizzaTwoPrice.innerHTML = "" + (apiData[1].price)
+  pizzaThreeName.innerHTML= apiData[2].name
+  pizzaThreeToppings.innerHTML = apiData[2].toppings
+  pizzaThreePrice.innerHTML = "" + (apiData[2].price)
+  pizzaFourName.innerHTML= apiData[3].name
+  pizzaFourToppings.innerHTML = apiData[3].toppings
+  pizzaFourPrice.innerHTML = "" + (apiData[3].price)
+  pizzaFiveName.innerHTML= apiData[4].name
+  pizzaFiveToppings.innerHTML = apiData[4].toppings
+  pizzaFivePrice.innerHTML = "" + (apiData[4].price)
+  pizzaSixName.innerHTML= apiData[5].name
+  pizzaSixToppings.innerHTML = apiData[5].toppings
+  pizzaSixPrice.innerHTML = "" + (apiData[5].price)
+  pizzaSevenName.innerHTML= apiData[6].name
+  pizzaSevenToppings.innerHTML = apiData[6].toppings
+  pizzaSevenPrice.innerHTML = "" + (apiData[6].price)
+}
 
-serverLoad()
+const loadData = async () => {
+  const apiData = await serverLoad()
+  if (apiData) renderData(apiData)
+}
+
+loadData()
 
 const customerName = document.getElementById("name")! as HTMLInputElement
 const customerZipCode = document.getElementById("zipcode")! as HTMLInputElement
@@ -123,12 +124,15 @@ const OrderSchema = z.object({
     phone: z.string(),
   }),
   date: z.string(),
-  pizza: z.array(z.string()),
+  pizza: z.array(z.object({
+    price: z.string(),
+    pizzaname: z.string(),
+    piece: z.string()
+  })),
   totalprice: z.number()
 })
 
 type Order = z.infer<typeof OrderSchema>
-
 
 let amountArray: number[] = []
 let pizzaOrders: Pizza[] = []
