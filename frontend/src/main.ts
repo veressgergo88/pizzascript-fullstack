@@ -51,7 +51,9 @@ const date = new Date();
 const year = date.getFullYear();
 const month = date.getMonth() + 1;
 const day = date.getDate();
-const today = (`${year}-${month}-${day}`).toString()
+const hour = date.getHours()
+const minutes = date.getMinutes()
+const today = (`${year}-${month}-${day}-${hour}-${minutes}`).toString()
 
 const PizzaResponseSchema = z.array(z.object({
   id: z.number(),
